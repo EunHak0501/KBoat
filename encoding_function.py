@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from collections import defaultdict
 from sklearn.model_selection import train_test_split
-from tqdm.auto import tqdm
+from tqdm.notebook import tqdm
 from sklearn.decomposition import PCA
 from prince import MCA
 

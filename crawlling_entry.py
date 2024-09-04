@@ -178,5 +178,4 @@ if __name__ == '__main__':
     final_df.to_csv(f'./crawlled_data/kboat_entries_{year}.csv', index=False, encoding='utf-8-sig')
     print(f'{year}년 모든 출주표 정보 크롤링 완료')
 
-
 ### ex) python crawlling_entry.py 2016
