@@ -91,3 +91,5 @@ df.dropna(thresh=5, inplace=True)  # 결측치가 threshold 이상인 행 삭제
 output_file = f'./crawlled_data/kboat_result_{Year}.csv'
 df.to_csv(output_file, index=False, encoding='utf-8-sig')
 print(f'{Year} 경기 결과 수집 완료, 파일 저장: {output_file}')
+
+# ex) python crawlling_result.py 2013
