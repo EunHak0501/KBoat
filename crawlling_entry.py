@@ -40,11 +40,21 @@ def crawl_race_entries(year, tms, day_ord):
 
     # 경주 번호에 따라 반복하여 데이터 수집
     race_blocks = soup.select('.pcType')  # 각 경주 블록들을 선택
+    race_types = soup.select('.boxr-head.clearfix')
 
     for race_no in range(1, total_races + 1):
         try:
             # 해당 경주에 대한 블록 가져오기
             race_block = race_blocks[race_no - 1]
+            race_type_block = race_types[race_no - 1]
+
+            race_type_element = race_type_block.select_one('p.bg')
+            race_type = race_type_element.text.strip() if race_type_element else "정보 없음"
+
+            if "플라잉" in race_type:
+                race_type = "플라잉"
+            elif "온라인" in race_type:
+                race_type = "온라인"
 
             # 첫 번째 테이블 데이터 추출
             table1 = race_block.select_one('.table.bd table')
@@ -83,14 +93,15 @@ def crawl_race_entries(year, tms, day_ord):
 
                 # 데이터를 리스트에 추가
                 data_1.append([
-                    year, tms, day_ord, race_no, 번호, 등급, 기수, 선수명, 성별, 나이, 체중,
+                    year, tms, day_ord, race_no, race_type, 번호, 등급, 기수, 선수명, 성별, 나이, 체중,
                     최근6회차_평균착순점, 최근6회차_평균득점, 최근6회차_승률, 최근6회차_연대율2,
                     최근6회차_연대율3, 최근6회차_평균ST, 최근8경주_착순, 연간성적_평균착순점,
                     연간성적_연대율, FL, 평균사고점, 금일출주경주, 전일성적
                 ])
 
             columns_1 = [
-                '연도', '회차', '일차', '경주번호', '번호', '등급', '기수', '선수명', '성별', '나이', '체중',
+                '연도', '회차', '일차', '경주번호', '경기종류',
+                '번호', '등급', '기수', '선수명', '성별', '나이', '체중',
                 '최근6회차_평균착순점', '최근6회차_평균득점', '최근6회차_승률', '최근6회차_연대율2',
                 '최근6회차_연대율3', '최근6회차_평균ST', '최근8경주_착순', '연간성적_평균착순점',
                 '연간성적_연대율', 'FL', '평균사고점', '금일출주경주', '전일성적'
@@ -161,15 +172,10 @@ if __name__ == '__main__':
 
     all_entries_data = []
 
-    j = 1
     for tms in tqdm(tms_list, leave=False):
-        for day_ord in dayOrd_list:
+        for day_ord in range(1,4):
             df = crawl_race_entries(year, tms, day_ord)
             all_entries_data.append(df)
-            if j % 10 == 0:
-                print(f"{tms}회차 완료")
-
-            j += 1
 
     # 전체 데이터를 하나의 DataFrame으로 합치기
     final_df = pd.concat(all_entries_data, ignore_index=True)
